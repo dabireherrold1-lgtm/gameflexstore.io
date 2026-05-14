@@ -1,1 +1,555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GameFlexStore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#f59e0b;--purple:#7c3aed;--pl:#a78bfa;
+  --green:#10b981;--gray:#94a3b8;--white:#f8fafc;
+  --bd:rgba(255,255,255,.08);--cb:rgba(255,255,255,.03);
+  --bg:#050810;
+}
+body{background:var(--bg);color:var(--white);font-family:'Rajdhani',sans-serif;overflow-x:hidden}
+a{cursor:pointer;text-decoration:none}
+
+/* BG glow */
+#bgGlow{position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 20%,rgba(124,58,237,.15),transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(245,158,11,.1),transparent 60%);pointer-events:none;z-index:0}
+
+/* NAV */
+nav{position:fixed;top:0;width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 32px;z-index:100;background:rgba(5,8,16,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd)}
+.nav-logo{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900}
+.nav-logo .gold{color:var(--gold)}.nav-logo .purple{color:var(--pl)}
+.nav-links{display:flex;gap:10px;align-items:center}
+.nav-links a{color:var(--gray);font-size:.8rem;text-transform:uppercase}
+.btn-cmd{background:var(--purple);color:#fff;padding:10px 18px;border-radius:6px;font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700}
+.btn-admin{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:var(--gold);padding:10px 14px;border-radius:6px;font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;cursor:pointer}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 24px 80px;position:relative;z-index:1}
+.badge-live{display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--gold);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;padding:8px 20px;border-radius:100px;margin-bottom:32px}
+h1.hero-title{font-family:'Orbitron',monospace;font-size:clamp(2.5rem,8vw,6rem);font-weight:900;line-height:1}
+h1.hero-title .pl{color:var(--pl)}.hero-title .gold{color:var(--gold)}
+.hero-sub{margin-top:20px;font-size:1.05rem;color:var(--gray);max-width:480px;line-height:1.7}
+.flags{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.flag{background:rgba(255,255,255,.05);border:1px solid var(--bd);padding:5px 12px;border-radius:100px;font-size:.78rem;color:var(--gray)}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:36px}
+.btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);color:#050810;padding:15px 38px;border-radius:8px;font-family:'Orbitron',monospace;font-weight:700;font-size:.82rem}
+.btn-outline{border:1px solid var(--pl);color:var(--pl);padding:15px 38px;border-radius:8px;font-family:'Orbitron',monospace;font-weight:700;font-size:.82rem}
+.stats{display:flex;border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-top:52px;flex-wrap:wrap}
+.stat{padding:18px 32px;border-right:1px solid var(--bd);text-align:center;background:var(--cb)}
+.stat-n{font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:900;color:var(--gold)}
+.stat-l{font-size:.7rem;color:var(--gray);text-transform:uppercase;margin-top:4px}
+
+/* PROMO */
+#promo{position:relative;z-index:1;padding:28px 32px;background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(245,158,11,.08));border-top:1px solid rgba(124,58,237,.3);border-bottom:1px solid rgba(245,158,11,.2)}
+.promo-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:center}
+.promo-title{font-family:'Orbitron',monospace;font-size:.85rem;text-align:center}
+#promoMsg{font-size:.8rem;margin-top:8px;text-align:center}
+.promo-form{display:flex;gap:10px}
+.inp{background:rgba(255,255,255,.07);border:1px solid var(--bd);color:var(--white);padding:12px 16px;border-radius:8px;font-family:'Orbitron',monospace;font-size:.78rem;outline:none;text-transform:uppercase;width:160px}
+.btn-apply{background:var(--gold);color:#050810;border:none;padding:12px 18px;border-radius:8px;font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;cursor:pointer}
+
+/* PRODUCTS */
+#products{padding:90px 32px;position:relative;z-index:1}
+.section-label{font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;color:var(--pl);margin-bottom:10px}
+.section-title{font-family:'Orbitron',monospace;font-size:clamp(1.4rem,3vw,2.2rem);font-weight:900}
+.section-title .gold{color:var(--gold)}
+.filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.filter-btn{padding:9px 22px;border-radius:100px;border:1px solid var(--bd);background:var(--cb);color:var(--gray);font-family:'Rajdhani',sans-serif;font-size:.85rem;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.filter-btn.active{border-color:var(--gold);background:rgba(245,158,11,.08);color:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:22px}
+.pcard{background:var(--cb);border:1px solid var(--bd);border-radius:16px;overflow:hidden;transition:all .3s;cursor:default}
+.pcard:hover{border-color:rgba(245,158,11,.4);transform:translateY(-5px);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.pcard-top{padding:26px 22px 18px;position:relative}
+.badge{position:absolute;top:14px;right:14px;padding:4px 10px;border-radius:100px;font-size:.62rem;font-weight:700;text-transform:uppercase}
+.badge-hot{background:rgba(239,68,68,.2);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+.badge-new{background:rgba(16,185,129,.2);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+.badge-pop{background:rgba(245,158,11,.2);color:#f59e0b;border:1px solid rgba(245,158,11,.3)}
+.pcard-icon-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.pcard-ico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.ico-psn{background:rgba(0,120,255,.2);border:1px solid rgba(0,120,255,.3)}
+.ico-rob{background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.3)}
+.pcard-type{font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700}
+.type-psn{color:#60a5fa}.type-rob{color:#34d399}
+.pcard-amount{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900}
+.pcard-region{font-size:.72rem;color:var(--gray);margin-top:3px}
+.pcard-bot{padding:14px 22px 22px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pcard-price{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;color:var(--gold)}
+.pcard-old{text-decoration:line-through;color:var(--gray);font-size:.75rem}
+.pcard-pm{font-size:.62rem;color:var(--gray);font-family:'Rajdhani',sans-serif;font-weight:400}
+.btn-buy{background:var(--purple);color:#fff;border:none;padding:10px 16px;border-radius:8px;font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* HOW */
+#how{padding:90px 32px;background:rgba(255,255,255,.02);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);position:relative;z-index:1}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:22px}
+.step{text-align:center;padding:30px 18px;background:var(--cb);border:1px solid var(--bd);border-radius:16px;transition:all .3s}
+.step:hover{border-color:var(--pl);transform:translateY(-4px)}
+.step-n{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:rgba(124,58,237,.3);margin-bottom:14px}
+.step-ic{font-size:1.7rem;margin-bottom:12px}
+.step-t{font-family:'Orbitron',monospace;font-size:.82rem;font-weight:700;margin-bottom:8px;color:var(--pl)}
+.step-d{font-size:.86rem;color:var(--gray);line-height:1.6}
+
+/* CTA */
+#contact{padding:90px 32px;text-align:center;position:relative;z-index:1;background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(245,158,11,.05));border-top:1px solid var(--bd)}
+.btn-wa{display:inline-flex;align-items:center;gap:12px;background:#25D366;color:#fff;padding:16px 42px;border-radius:100px;font-family:'Orbitron',monospace;font-weight:700;font-size:.85rem;box-shadow:0 0 40px rgba(37,211,102,.3)}
+
+/* FOOTER */
+footer{padding:28px 32px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:relative;z-index:1}
+footer .logo{font-family:'Orbitron',monospace;font-weight:900}
+footer .copy{font-size:.75rem;color:var(--gray)}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;justify-content:center;align-items:center;backdrop-filter:blur(12px)}
+.overlay.open{display:flex}
+.modal{background:#0d1426;border:1px solid var(--gold);border-radius:20px;padding:40px;max-width:380px;width:90%;text-align:center}
+.modal h2{font-family:'Orbitron',monospace;color:var(--gold);margin-bottom:8px;font-size:1.1rem}
+.modal p{color:var(--gray);font-size:.85rem;margin-bottom:28px}
+.modal input{background:rgba(255,255,255,.07);border:1px solid var(--bd);color:var(--white);padding:14px 18px;border-radius:10px;font-family:'Orbitron',monospace;font-size:.85rem;letter-spacing:.15em;outline:none;text-align:center;margin-bottom:14px;width:100%}
+.btn-login{width:100%;background:var(--gold);color:#050810;border:none;padding:14px;border-radius:10px;font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700;cursor:pointer;margin-bottom:10px}
+.btn-cancel{background:none;border:none;color:var(--gray);font-size:.8rem;cursor:pointer;font-family:'Rajdhani',sans-serif}
+#loginErr{color:#f87171;font-size:.8rem;margin-bottom:14px}
+
+/* ADMIN */
+#adminPanel{display:none;position:fixed;inset:0;background:#050810;z-index:2000;overflow-y:auto}
+#adminPanel.open{display:block}
+.admin-header{background:rgba(5,8,16,.95);border-bottom:1px solid var(--gold);padding:20px 32px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.admin-header h1{font-family:'Orbitron',monospace;color:var(--gold);font-size:1rem}
+.admin-header p{color:var(--gray);font-size:.75rem;margin-top:2px}
+.btn-close-admin{background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.3);color:#f87171;padding:10px 20px;border-radius:8px;font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;cursor:pointer}
+.admin-body{padding:32px;max-width:900px;margin:0 auto}
+.tabs{display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap}
+.tab-btn{padding:10px 24px;border-radius:8px;border:1px solid var(--bd);background:var(--cb);color:var(--gray);font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s}
+.tab-btn.active{border-color:var(--gold);background:rgba(245,158,11,.1);color:var(--gold)}
+.tab-content{display:none}.tab-content.active{display:block}
+.panel-box{background:var(--cb);border:1px solid var(--bd);border-radius:16px;padding:28px}
+.panel-box h3{font-family:'Orbitron',monospace;color:var(--pl);font-size:.88rem;margin-bottom:20px}
+.product-row{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:12px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px}
+.product-row-info{display:flex;align-items:center;gap:12px}
+.product-row-name{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700}
+.product-row-price{font-size:.75rem;color:var(--gold);margin-top:2px}
+.row-btns{display:flex;gap:8px}
+.btn-edit{background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.3);color:var(--pl);padding:8px 14px;border-radius:6px;font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;cursor:pointer}
+.btn-del{background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.3);color:#f87171;padding:8px 14px;border-radius:6px;font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;cursor:pointer}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.form-group label{font-size:.8rem;color:var(--gray);display:block;margin-bottom:6px}
+.form-group input,.form-group select{background:rgba(255,255,255,.07);border:1px solid var(--bd);color:var(--white);padding:12px 16px;border-radius:8px;font-size:1rem;outline:none;width:100%;font-family:'Rajdhani',sans-serif}
+.form-btns{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+.btn-save{background:var(--gold);color:#050810;border:none;padding:14px 32px;border-radius:8px;font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;cursor:pointer}
+.btn-cancel2{background:rgba(255,255,255,.05);border:1px solid var(--bd);color:var(--gray);padding:14px 24px;border-radius:8px;font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;cursor:pointer}
+.code-row{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.code-val{font-family:'Orbitron',monospace;font-size:.9rem;color:var(--gold);letter-spacing:.1em}
+.code-right{display:flex;align-items:center;gap:12px}
+.code-pct{font-size:.75rem;color:var(--gray)}
+.add-code-row{display:flex;gap:10px;margin-top:16px}
+.inp-code{background:rgba(255,255,255,.07);border:1px solid var(--bd);color:var(--white);padding:12px 16px;border-radius:8px;font-family:'Orbitron',monospace;font-size:.8rem;outline:none;flex:1;text-transform:uppercase}
+.btn-add-code{background:var(--gold);color:#050810;border:none;padding:12px 20px;border-radius:8px;font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-add-product{margin-top:20px;background:var(--purple);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="bgGlow"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">GAME<span class="gold">FLEX</span><span class="purple">STORE</span></div>
+  <div class="nav-links">
+    <a href="#products">Produits</a>
+    <a class="btn-cmd" href="#contact">Commander</a>
+    <button class="btn-admin" onclick="openLogin()">🔐 Admin</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="badge-live">● Livraison instantanée — 24h/24</div>
+  <h1 class="hero-title"><span class="pl">GAME</span><span class="gold">FLEX</span><br>STORE</h1>
+  <p class="hero-sub">Cartes PSN &amp; Robux livrés instantanément en Afrique.<br>Orange Money &amp; Wave acceptés. 🌍</p>
+  <div class="flags">
+    <span class="flag">🇧🇫 Burkina Faso</span>
+    <span class="flag">🇨🇮 Côte d'Ivoire</span>
+    <span class="flag">🇸🇳 Sénégal</span>
+    <span class="flag">🇲🇱 Mali</span>
+  </div>
+  <div class="hero-btns">
+    <a class="btn-gold" href="#products">🎮 Voir les cartes</a>
+    <a class="btn-outline" href="#how">Comment ça marche ?</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n">500+</div><div class="stat-l">Clients</div></div>
+    <div class="stat"><div class="stat-n">&lt;5min</div><div class="stat-l">Livraison</div></div>
+    <div class="stat"><div class="stat-n">24/7</div><div class="stat-l">Support</div></div>
+    <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Sécurisé</div></div>
+  </div>
+</section>
+
+<!-- PROMO -->
+<div id="promo">
+  <div class="promo-inner">
+    <div>
+      <div class="promo-title">🎁 Code promo ? <span style="color:var(--gold)">-5%</span> sur ta commande !</div>
+      <div id="promoMsg"></div>
+    </div>
+    <div class="promo-form">
+      <input id="promoInput" class="inp" placeholder="TON CODE" onkeydown="if(event.key==='Enter')applyPromo()"/>
+      <button class="btn-apply" onclick="applyPromo()">Appliquer</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div style="text-align:center;margin-bottom:48px">
+    <div class="section-label">✦ Notre catalogue</div>
+    <h2 class="section-title">Nos <span class="gold">Cartes</span> Disponibles</h2>
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter(this,'all')">Tout voir</button>
+    <button class="filter-btn" data-filter="psn" onclick="setFilter(this,'psn')">🎮 PSN</button>
+    <button class="filter-btn" data-filter="robux" onclick="setFilter(this,'robux')">🟢 Robux</button>
+  </div>
+  <div class="grid" id="productGrid"></div>
+</section>
+
+<!-- HOW -->
+<section id="how">
+  <div style="text-align:center;margin-bottom:48px">
+    <div class="section-label">✦ Simple &amp; Rapide</div>
+    <h2 class="section-title">Comment ça <span class="gold">marche ?</span></h2>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-n">01</div><div class="step-ic">🛒</div><div class="step-t">Choisir</div><div class="step-d">Sélectionne ta carte dans le catalogue.</div></div>
+    <div class="step"><div class="step-n">02</div><div class="step-ic">💸</div><div class="step-t">Payer</div><div class="step-d">Envoie le montant via Orange Money ou Wave.</div></div>
+    <div class="step"><div class="step-n">03</div><div class="step-ic">📩</div><div class="step-t">Confirmer</div><div class="step-d">Envoie la capture de ton paiement sur WhatsApp.</div></div>
+    <div class="step"><div class="step-n">04</div><div class="step-ic">⚡</div><div class="step-t">Recevoir</div><div class="step-d">Ton code livré en moins de 5 minutes !</div></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="contact">
+  <h2 style="font-family:'Orbitron',monospace;font-size:clamp(1.3rem,3vw,2rem);font-weight:900;margin-bottom:12px">Prêt à commander ? 🎮</h2>
+  <p style="color:var(--gray);margin-bottom:32px;font-size:.95rem">Contacte-nous sur WhatsApp — réponse en moins de 5 minutes</p>
+  <a class="btn-wa" id="waGeneral" href="#" target="_blank" rel="noreferrer">💬 Commander sur WhatsApp</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">GAME<span style="color:var(--gold)">FLEX</span>STORE</div>
+  <div class="copy">© 2026 GameFlexStore 🇧🇫 — Tous droits réservés</div>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div class="overlay" id="loginModal">
+  <div class="modal">
+    <div style="font-size:2rem;margin-bottom:12px">🔐</div>
+    <h2>Panneau Admin</h2>
+    <p>Entre ton mot de passe pour accéder au panneau de gestion</p>
+    <input type="password" id="loginInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div id="loginErr"></div>
+    <button class="btn-login" onclick="doLogin()">Connexion</button>
+    <button class="btn-cancel" onclick="closeLogin()">Annuler</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+  <div class="admin-header">
+    <div>
+      <h1>🔐 Panneau Admin</h1>
+      <p>GameFlexStore — Gestion de la boutique</p>
+    </div>
+    <button class="btn-close-admin" onclick="closeAdmin()">✕ Fermer</button>
+  </div>
+  <div class="admin-body">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('products',this)">📦 Produits</button>
+      <button class="tab-btn" id="addTabBtn" onclick="switchTab('add',this)">➕ Ajouter</button>
+      <button class="tab-btn" onclick="switchTab('codes',this)">🎟️ Codes Promo</button>
+    </div>
+
+    <!-- Tab products -->
+    <div class="tab-content active" id="tab-products">
+      <div class="panel-box">
+        <h3 id="prodCount">Tous les produits</h3>
+        <div id="adminProductList"></div>
+        <button class="btn-add-product" onclick="openAddTab()">➕ Ajouter un produit</button>
+      </div>
+    </div>
+
+    <!-- Tab add/edit -->
+    <div class="tab-content" id="tab-add">
+      <div class="panel-box">
+        <h3 id="formTitle">➕ Nouveau produit</h3>
+        <input type="hidden" id="editId" value=""/>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Catégorie</label>
+            <select id="fCat" onchange="onCatChange()">
+              <option value="psn">🎮 PSN</option>
+              <option value="robux">🟢 Robux</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Nom du produit</label><input id="fName" placeholder="Ex: PSN 20€"/></div>
+          <div class="form-group"><label>Montant affiché</label><input id="fAmount" placeholder="Ex: 20€ ou 800 Robux"/></div>
+          <div class="form-group"><label>Prix en FCFA</label><input id="fPrice" type="number" placeholder="Ex: 13000"/></div>
+          <div class="form-group"><label>Région</label><input id="fRegion" placeholder="🌍 Europe"/></div>
+          <div class="form-group">
+            <label>Badge</label>
+            <select id="fBadge">
+              <option value="hot">🔥 HOT</option>
+              <option value="new">✨ NEW</option>
+              <option value="pop">⭐ POP</option>
+              <option value="">Aucun</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-btns">
+          <button class="btn-save" onclick="saveProduct()">✅ Enregistrer</button>
+          <button class="btn-cancel2" onclick="cancelForm()">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab codes -->
+    <div class="tab-content" id="tab-codes">
+      <div class="panel-box">
+        <h3>🎟️ Codes Promo (-5%)</h3>
+        <div id="codeList"></div>
+        <div class="add-code-row">
+          <input class="inp-code" id="newCodeInput" placeholder="NOUVEAU CODE" onkeydown="if(event.key==='Enter')addCode()"/>
+          <button class="btn-add-code" onclick="addCode()">➕ Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WA = "22677363695";
+const ADMIN_PWD = "FLEX2026";
+
+let products = [
+  { id:1, cat:"psn",   name:"PSN 10€",     amount:"10€",       region:"🌍 Europe",  price:5000,  badge:"hot", icon:"🎮" },
+  { id:2, cat:"psn",   name:"PSN 15€",     amount:"15€",       region:"🌍 Europe",  price:16000, badge:"pop", icon:"🎮" },
+  { id:3, cat:"robux", name:"400 Robux",   amount:"400 Robux", region:"🌍 Officiel",price:5924,  badge:"new", icon:"🟢" },
+  { id:4, cat:"robux", name:"800 Robux",   amount:"800 Robux", region:"🌍 Officiel",price:9854,  badge:"hot", icon:"🟢" },
+  { id:5, cat:"robux", name:"1700 Robux",  amount:"1700 Robux",region:"🌍 Officiel",price:17713, badge:"pop", icon:"🟢" },
+  { id:6, cat:"robux", name:"4500 Robux",  amount:"4500 Robux",region:"🌍 Officiel",price:41293, badge:"",   icon:"🟢" },
+];
+let codes = ["FLEX5","GAME5","AFRICA5"];
+let promoActive = false;
+let currentFilter = "all";
+
+const fmt = n => Number(n).toLocaleString("fr") + " FCFA";
+const fp = p => promoActive ? Math.round(p * 0.95) : p;
+
+const badgeInfo = b => {
+  if(b==="hot") return {cls:"badge-hot", label:"🔥 HOT"};
+  if(b==="new") return {cls:"badge-new", label:"✨ NEW"};
+  if(b==="pop") return {cls:"badge-pop", label:"⭐ POP"};
+  return null;
+};
+
+function waLink(p){
+  const msg = encodeURIComponent(`Bonjour GameFlexStore ! 🎮\nCommande : ${p.name}\nMontant : ${fmt(fp(p.price))}${promoActive?"\n(Promo -5% appliquée)":""}`);
+  return `https://wa.me/${WA}?text=${msg}`;
+}
+
+function renderProducts(){
+  const grid = document.getElementById("productGrid");
+  const filtered = products.filter(p => currentFilter==="all" || p.cat===currentFilter);
+  if(!filtered.length){ grid.innerHTML='<p style="text-align:center;color:var(--gray);padding:40px">Aucun produit.</p>'; return; }
+  grid.innerHTML = filtered.map(p => {
+    const b = badgeInfo(p.badge);
+    const badgeHtml = b ? `<div class="badge ${b.cls}">${b.label}</div>` : "";
+    const oldPrice = promoActive ? `<div class="pcard-old">${fmt(p.price)}</div>` : "";
+    const icoClass = p.cat==="psn" ? "ico-psn" : "ico-rob";
+    const typeClass = p.cat==="psn" ? "type-psn" : "type-rob";
+    const typeName = p.cat==="psn" ? "PlayStation Network" : "Roblox — Robux";
+    return `
+    <div class="pcard">
+      <div class="pcard-top">
+        ${badgeHtml}
+        <div class="pcard-icon-row">
+          <div class="pcard-ico ${icoClass}">${p.icon}</div>
+          <div class="pcard-type ${typeClass}">${typeName}</div>
+        </div>
+        <div class="pcard-amount">${p.amount}</div>
+        <div class="pcard-region">${p.region}</div>
+      </div>
+      <div class="pcard-bot">
+        <div class="pcard-price">
+          ${oldPrice}
+          ${fmt(fp(p.price))}
+          <div class="pcard-pm">Orange Money / Wave</div>
+        </div>
+        <a href="${waLink(p)}" target="_blank" rel="noreferrer" class="btn-buy">Acheter</a>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function setFilter(btn, val){
+  currentFilter = val;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderProducts();
+}
+
+function applyPromo(){
+  const c = document.getElementById("promoInput").value.trim().toUpperCase();
+  const msg = document.getElementById("promoMsg");
+  if(codes.includes(c)){
+    promoActive = true;
+    msg.style.color = "var(--green)";
+    msg.textContent = "✅ Code appliqué ! -5% sur tous les prix";
+  } else {
+    promoActive = false;
+    msg.style.color = "#f87171";
+    msg.textContent = "❌ Code invalide. Réessaie !";
+  }
+  renderProducts();
+}
+
+// WA general
+document.getElementById("waGeneral").href = `https://wa.me/${WA}?text=${encodeURIComponent("Bonjour GameFlexStore ! 🎮 Je veux passer une commande.")}`;
+
+// LOGIN
+function openLogin(){ document.getElementById("loginModal").classList.add("open"); }
+function closeLogin(){ document.getElementById("loginModal").classList.remove("open"); document.getElementById("loginErr").textContent=""; document.getElementById("loginInput").value=""; }
+function doLogin(){
+  if(document.getElementById("loginInput").value.trim() === ADMIN_PWD){
+    closeLogin(); openAdmin();
+  } else {
+    document.getElementById("loginErr").textContent = "❌ Mot de passe incorrect !";
+  }
+}
+
+// ADMIN
+function openAdmin(){ document.getElementById("adminPanel").classList.add("open"); renderAdminProducts(); renderCodes(); updateProdCount(); }
+function closeAdmin(){ document.getElementById("adminPanel").classList.remove("open"); }
+
+function updateProdCount(){ document.getElementById("prodCount").textContent = `Tous les produits (${products.length})`; }
+
+function renderAdminProducts(){
+  const list = document.getElementById("adminProductList");
+  if(!products.length){ list.innerHTML='<p style="color:var(--gray)">Aucun produit.</p>'; return; }
+  list.innerHTML = products.map(p => `
+    <div class="product-row">
+      <div class="product-row-info">
+        <span style="font-size:1.4rem">${p.icon}</span>
+        <div>
+          <div class="product-row-name">${p.name}</div>
+          <div class="product-row-price">${fmt(p.price)}</div>
+        </div>
+      </div>
+      <div class="row-btns">
+        <button class="btn-edit" onclick="startEdit(${p.id})">✏️ Modifier</button>
+        <button class="btn-del" onclick="delProduct(${p.id})">🗑️ Supprimer</button>
+      </div>
+    </div>`).join("");
+}
+
+function renderCodes(){
+  const list = document.getElementById("codeList");
+  if(!codes.length){ list.innerHTML='<p style="color:var(--gray)">Aucun code actif.</p>'; return; }
+  list.innerHTML = codes.map(c => `
+    <div class="code-row">
+      <div class="code-val">${c}</div>
+      <div class="code-right">
+        <span class="code-pct">-5% de réduction</span>
+        <button class="btn-del" onclick="delCode('${c}')">🗑️ Supprimer</button>
+      </div>
+    </div>`).join("");
+}
+
+function switchTab(name, btn){
+  document.querySelectorAll(".tab-content").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("tab-"+name).classList.add("active");
+  btn.classList.add("active");
+}
+
+function openAddTab(){
+  document.getElementById("editId").value="";
+  document.getElementById("formTitle").textContent="➕ Nouveau produit";
+  document.getElementById("fCat").value="psn";
+  document.getElementById("fName").value="";
+  document.getElementById("fAmount").value="";
+  document.getElementById("fPrice").value="";
+  document.getElementById("fRegion").value="🌍 Europe";
+  document.getElementById("fBadge").value="hot";
+  const btn = document.querySelectorAll(".tab-btn")[1];
+  btn.textContent="➕ Ajouter";
+  switchTab("add", btn);
+}
+
+function startEdit(id){
+  const p = products.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById("editId").value=id;
+  document.getElementById("formTitle").textContent="✏️ Modifier le produit";
+  document.getElementById("fCat").value=p.cat;
+  document.getElementById("fName").value=p.name;
+  document.getElementById("fAmount").value=p.amount;
+  document.getElementById("fPrice").value=p.price;
+  document.getElementById("fRegion").value=p.region;
+  document.getElementById("fBadge").value=p.badge;
+  const btn = document.querySelectorAll(".tab-btn")[1];
+  btn.textContent="✏️ Modifier";
+  switchTab("add", btn);
+}
+
+function onCatChange(){
+  // auto icon based on cat (internal)
+}
+
+function saveProduct(){
+  const editId = document.getElementById("editId").value;
+  const cat = document.getElementById("fCat").value;
+  const obj = {
+    cat, icon: cat==="psn"?"🎮":"🟢",
+    name: document.getElementById("fName").value,
+    amount: document.getElementById("fAmount").value,
+    price: Number(document.getElementById("fPrice").value),
+    region: document.getElementById("fRegion").value,
+    badge: document.getElementById("fBadge").value,
+  };
+  if(!obj.name || !obj.price) return;
+  if(editId){
+    products = products.map(p => p.id==editId ? {...p,...obj} : p);
+  } else {
+    products.push({...obj, id: Date.now()});
+  }
+  renderProducts(); renderAdminProducts(); updateProdCount();
+  cancelForm();
+}
+
+function delProduct(id){
+  products = products.filter(p=>p.id!==id);
+  renderProducts(); renderAdminProducts(); updateProdCount();
+}
+
+function cancelForm(){
+  const btn = document.querySelectorAll(".tab-btn")[0];
+  switchTab("products", btn);
+  document.querySelectorAll(".tab-btn")[1].textContent="➕ Ajouter";
+}
+
+function addCode(){
+  const c = document.getElementById("newCodeInput").value.trim().toUpperCase();
+  if(c && !codes.includes(c)){ codes.push(c); document.getElementById("newCodeInput").value=""; renderCodes(); }
+}
+
+function delCode(c){ codes=codes.filter(x=>x!==c); renderCodes(); }
+
+// Init
+renderProducts();
+</script>
+</body>
+</html>
 
